@@ -105,6 +105,7 @@ public class NamesrvStartup {
             System.exit(0);
         }
 
+
         MixAll.properties2Object(ServerUtil.commandLine2Properties(commandLine), namesrvConfig);
 
         if (null == namesrvConfig.getRocketmqHome()) {
