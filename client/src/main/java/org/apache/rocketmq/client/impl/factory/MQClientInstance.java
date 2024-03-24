@@ -488,6 +488,11 @@ public class MQClientInstance {
         }
     }
 
+    /**
+     * 获取远程的topic 名称
+     * @param topic 主题
+     * @return
+     */
     public boolean updateTopicRouteInfoFromNameServer(final String topic) {
         return updateTopicRouteInfoFromNameServer(topic, false, null);
     }
@@ -585,13 +590,23 @@ public class MQClientInstance {
         }
     }
 
+    /**
+     * 从名称服务器更新主题路由信息
+     * @param topic 主题名
+     * @param isDefault 是否默认
+     * @param defaultMQProducer 默认生产者
+     * @return
+     */
     public boolean updateTopicRouteInfoFromNameServer(final String topic, boolean isDefault,
         DefaultMQProducer defaultMQProducer) {
         try {
             if (this.lockNamesrv.tryLock(LOCK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
                 try {
+                    //主题路由数据
                     TopicRouteData topicRouteData;
                     if (isDefault && defaultMQProducer != null) {
+
+                        //获取主题路由数据
                         topicRouteData = this.mQClientAPIImpl.getDefaultTopicRouteInfoFromNameServer(defaultMQProducer.getCreateTopicKey(),
                             1000 * 3);
                         if (topicRouteData != null) {
@@ -602,6 +617,7 @@ public class MQClientInstance {
                             }
                         }
                     } else {
+                        //获取主题路由数据
                         topicRouteData = this.mQClientAPIImpl.getTopicRouteInfoFromNameServer(topic, 1000 * 3);
                     }
                     if (topicRouteData != null) {

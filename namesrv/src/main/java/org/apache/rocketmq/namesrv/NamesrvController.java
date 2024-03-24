@@ -73,17 +73,27 @@ public class NamesrvController {
         this.configuration.setStorePathFromConfig(this.namesrvConfig, "configStorePath");
     }
 
+    /**
+     * 初始化
+     * @return
+     */
     public boolean initialize() {
 
         this.kvConfigManager.load();
 
+        //netty配置
         this.remotingServer = new NettyRemotingServer(this.nettyServerConfig, this.brokerHousekeepingService);
 
+        //
         this.remotingExecutor =
             Executors.newFixedThreadPool(nettyServerConfig.getServerWorkerThreads(), new ThreadFactoryImpl("RemotingExecutorThread_"));
 
+        //注册处理器
+        //todo 暂时还不了解
         this.registerProcessor();
 
+        //定期扫描不活跃的Broker
+        // 每10秒扫描一次
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -92,6 +102,7 @@ public class NamesrvController {
             }
         }, 5, 10, TimeUnit.SECONDS);
 
+        //定期打印全部信息
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -100,6 +111,7 @@ public class NamesrvController {
             }
         }, 1, 10, TimeUnit.MINUTES);
 
+        //安全相关的  稍后处理
         if (TlsSystemConfig.tlsMode != TlsMode.DISABLED) {
             // Register a listener to reload SslContext
             try {
@@ -152,6 +164,7 @@ public class NamesrvController {
         }
     }
 
+    //启动服务
     public void start() throws Exception {
         this.remotingServer.start();
 
@@ -160,6 +173,9 @@ public class NamesrvController {
         }
     }
 
+    /**
+     * 服务下线
+     */
     public void shutdown() {
         this.remotingServer.shutdown();
         this.remotingExecutor.shutdown();

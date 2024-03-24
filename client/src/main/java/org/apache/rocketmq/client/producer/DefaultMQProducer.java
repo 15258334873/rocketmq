@@ -58,6 +58,7 @@ import org.apache.rocketmq.remoting.netty.NettyRemotingClient;
  * <strong>Thread Safety:</strong> After configuring and starting process, this class can be regarded as thread-safe
  * and used among multiple threads context.
  * </p>
+ * 消息发送主类
  */
 public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
@@ -77,6 +78,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      * </p>
      *
      * See {@linktourl http://rocketmq.apache.org/docs/core-concept/} for more discussion.
+     * 生产者组
      */
     private String producerGroup;
 
@@ -86,12 +88,13 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     private String createTopicKey = MixAll.AUTO_CREATE_TOPIC_KEY_TOPIC;
 
     /**
-     * Number of queues to create per default topic.
+     * Number of queues to create per default topic.、
      */
     private volatile int defaultTopicQueueNums = 4;
 
     /**
      * Timeout for sending messages.
+     * 超时时间
      */
     private int sendMsgTimeout = 3000;
 
@@ -105,6 +108,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      * </p>
      *
      * This may potentially cause message duplication which is up to application developers to resolve.
+     * 同步发送重试次数（不包含本次）
      */
     private int retryTimesWhenSendFailed = 2;
 
@@ -113,6 +117,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      * </p>
      *
      * This may potentially cause message duplication which is up to application developers to resolve.
+     * 异步发送重试次数（不包含本次）
+     *
      */
     private int retryTimesWhenSendAsyncFailed = 2;
 
@@ -123,6 +129,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Maximum allowed message size in bytes.
+     * 批量发送消息大小
      */
     private int maxMessageSize = 1024 * 1024 * 4; // 4M
 

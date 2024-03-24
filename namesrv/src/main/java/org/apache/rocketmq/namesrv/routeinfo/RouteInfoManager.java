@@ -426,6 +426,9 @@ public class RouteInfoManager {
         return null;
     }
 
+    /**
+     * 定期扫描不活跃的Broker
+     */
     public void scanNotActiveBroker() {
         Iterator<Entry<String, BrokerLiveInfo>> it = this.brokerLiveTable.entrySet().iterator();
         while (it.hasNext()) {
