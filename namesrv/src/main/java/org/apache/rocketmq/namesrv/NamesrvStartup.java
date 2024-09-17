@@ -84,13 +84,14 @@ public class NamesrvStartup {
             System.exit(-1);
             return null;
         }
+        //两个核心的配置类
         //创建一个NamesrvConfig
         final NamesrvConfig namesrvConfig = new NamesrvConfig();
         //创建一个 NettyServerConfig
         final NettyServerConfig nettyServerConfig = new NettyServerConfig();
         //设置端口号为  9876
         nettyServerConfig.setListenPort(9876);
-
+        //解析-c参数 解析配置类
         if (commandLine.hasOption('c')) {
             //变量的解析
             String file = commandLine.getOptionValue('c');
@@ -107,7 +108,7 @@ public class NamesrvStartup {
                 in.close();
             }
         }
-
+        //解析-p参数 输出配置信息
         if (commandLine.hasOption('p')) {
             //变量的解析
             InternalLogger console = InternalLoggerFactory.getLogger(LoggerName.NAMESRV_CONSOLE_NAME);
@@ -136,6 +137,7 @@ public class NamesrvStartup {
         MixAll.printObjectProperties(log, namesrvConfig);
         MixAll.printObjectProperties(log, nettyServerConfig);
 
+        //初始化NamesrvController控制器
         final NamesrvController controller = new NamesrvController(namesrvConfig, nettyServerConfig);
 
         // remember all configs to prevent discard

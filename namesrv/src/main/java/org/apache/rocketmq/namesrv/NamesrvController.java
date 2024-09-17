@@ -60,6 +60,11 @@ public class NamesrvController {
     private Configuration configuration;
     private FileWatchService fileWatchService;
 
+    /**
+     *
+     * @param namesrvConfig namesrvConfig配置文件
+     * @param nettyServerConfig  nettyServerConfig 配置文件
+     */
     public NamesrvController(NamesrvConfig namesrvConfig, NettyServerConfig nettyServerConfig) {
         this.namesrvConfig = namesrvConfig;
         this.nettyServerConfig = nettyServerConfig;
@@ -79,12 +84,13 @@ public class NamesrvController {
      */
     public boolean initialize() {
 
+
         this.kvConfigManager.load();
 
         //netty配置
         this.remotingServer = new NettyRemotingServer(this.nettyServerConfig, this.brokerHousekeepingService);
 
-        //
+        //创建一个线程池
         this.remotingExecutor =
             Executors.newFixedThreadPool(nettyServerConfig.getServerWorkerThreads(), new ThreadFactoryImpl("RemotingExecutorThread_"));
 
@@ -95,12 +101,12 @@ public class NamesrvController {
         //定期扫描不活跃的Broker
         // 每10秒扫描一次
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-
             @Override
             public void run() {
                 NamesrvController.this.routeInfoManager.scanNotActiveBroker();
             }
         }, 5, 10, TimeUnit.SECONDS);
+
 
         //定期打印全部信息
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {

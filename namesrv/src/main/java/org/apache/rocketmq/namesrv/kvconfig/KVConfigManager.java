@@ -41,6 +41,9 @@ public class KVConfigManager {
         this.namesrvController = namesrvController;
     }
 
+    /**
+     *加载kvConfig.json
+     */
     public void load() {
         String content = null;
         try {

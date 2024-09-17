@@ -48,7 +48,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.apache.rocketmq.remoting.netty.TlsSystemConfig.TLS_ENABLE;
 
+/**
+ * BrokerStartup 启动类
+ */
 public class BrokerStartup {
+
     public static Properties properties = null;
     public static CommandLine commandLine = null;
     public static String configFile = null;
@@ -57,6 +61,7 @@ public class BrokerStartup {
     public static void main(String[] args) {
         start(createBrokerController(args));
     }
+
 
     public static BrokerController start(BrokerController controller) {
         try {
@@ -87,7 +92,13 @@ public class BrokerStartup {
         }
     }
 
+    /**
+     * 创建BrokerController 总控制器
+     * @param args
+     * @return
+     */
     public static BrokerController createBrokerController(String[] args) {
+        //获取 环境变量版本信息
         System.setProperty(RemotingCommand.REMOTING_VERSION_KEY, Integer.toString(MQVersion.CURRENT_VERSION));
 
         if (null == System.getProperty(NettySystemConfig.COM_ROCKETMQ_REMOTING_SOCKET_SNDBUF_SIZE)) {
@@ -106,7 +117,7 @@ public class BrokerStartup {
             if (null == commandLine) {
                 System.exit(-1);
             }
-
+            //Broker的核心配置类
             final BrokerConfig brokerConfig = new BrokerConfig();
             final NettyServerConfig nettyServerConfig = new NettyServerConfig();
             final NettyClientConfig nettyClientConfig = new NettyClientConfig();
@@ -121,6 +132,7 @@ public class BrokerStartup {
                 messageStoreConfig.setAccessMessageInMemoryMaxRatio(ratio);
             }
 
+            //解析 -c 配置文件
             if (commandLine.hasOption('c')) {
                 String file = commandLine.getOptionValue('c');
                 if (file != null) {
@@ -142,11 +154,12 @@ public class BrokerStartup {
 
             MixAll.properties2Object(ServerUtil.commandLine2Properties(commandLine), brokerConfig);
 
+            //判断有无配置系统环境
             if (null == brokerConfig.getRocketmqHome()) {
                 System.out.printf("Please set the %s variable in your environment to match the location of the RocketMQ installation", MixAll.ROCKETMQ_HOME_ENV);
                 System.exit(-2);
             }
-
+            //获取 namesrvAddr地址
             String namesrvAddr = brokerConfig.getNamesrvAddr();
             if (null != namesrvAddr) {
                 try {
@@ -162,6 +175,7 @@ public class BrokerStartup {
                 }
             }
 
+            //判断角色 主从
             switch (messageStoreConfig.getBrokerRole()) {
                 case ASYNC_MASTER:
                 case SYNC_MASTER:
@@ -172,7 +186,6 @@ public class BrokerStartup {
                         System.out.printf("Slave's brokerId must be > 0");
                         System.exit(-3);
                     }
-
                     break;
                 default:
                     break;
@@ -214,9 +227,10 @@ public class BrokerStartup {
                 messageStoreConfig);
             // remember all configs to prevent discard
             controller.getConfiguration().registerConfig(properties);
-
+            //初始化 控制器
             boolean initResult = controller.initialize();
             if (!initResult) {
+                //下线
                 controller.shutdown();
                 System.exit(-3);
             }

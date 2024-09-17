@@ -23,6 +23,7 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 /**
+ * 生产者
  * This class demonstrates how to send messages to brokers using provided {@link DefaultMQProducer}.
  */
 public class Producer {
@@ -30,8 +31,16 @@ public class Producer {
 
         /*
          * Instantiate with a producer group name.
+         * 生产者组
          */
         DefaultMQProducer producer = new DefaultMQProducer("please_rename_unique_group_name");
+
+        /**
+         * Namesrv地址
+         */
+        producer.setNamesrvAddr("");
+
+
 
         /*
          * Specify name server addresses.
