@@ -50,10 +50,19 @@ public class NamesrvStartup {
     private static Properties properties = null;
     private static CommandLine commandLine = null;
 
+    /**
+     * 主入口
+     * @param args
+     */
     public static void main(String[] args) {
         main0(args);
     }
 
+    /**
+     * 入口
+     * @param args
+     * @return
+     */
     public static NamesrvController main0(String[] args) {
 
         try {
@@ -73,6 +82,13 @@ public class NamesrvStartup {
         return null;
     }
 
+    /**
+     * 创建 NamesrvController
+     * @param args
+     * @return
+     * @throws IOException
+     * @throws JoranException
+     */
     public static NamesrvController createNamesrvController(String[] args) throws IOException, JoranException {
         //获取环境变量
         System.setProperty(RemotingCommand.REMOTING_VERSION_KEY, Integer.toString(MQVersion.CURRENT_VERSION));
@@ -117,9 +133,10 @@ public class NamesrvStartup {
             System.exit(0);
         }
 
+
         MixAll.properties2Object(ServerUtil.commandLine2Properties(commandLine), namesrvConfig);
 
-        //若  rocketmqHome 为空就报错
+        //若 rocketmqHome 为空就报错 无系统环境配置
         if (null == namesrvConfig.getRocketmqHome()) {
             System.out.printf("Please set the %s variable in your environment to match the location of the RocketMQ installation%n", MixAll.ROCKETMQ_HOME_ENV);
             System.exit(-2);
@@ -158,7 +175,6 @@ public class NamesrvStartup {
         if (null == controller) {
             throw new IllegalArgumentException("NamesrvController is null");
         }
-
 
         // 初始化
         boolean initResult = controller.initialize();

@@ -164,10 +164,19 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         log.info("register sendMessage Hook, {}", hook.hookName());
     }
 
+    /**
+     * 开始
+     * @throws MQClientException
+     */
     public void start() throws MQClientException {
         this.start(true);
     }
 
+    /**
+     * 开始
+     * @param startFactory
+     * @throws MQClientException
+     */
     public void start(final boolean startFactory) throws MQClientException {
         switch (this.serviceState) {
             case CREATE_JUST:
@@ -517,7 +526,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
      * 发送消息
      * @param msg 消息内容
      * @param communicationMode 通信方式
-     * @param sendCallback
+     * @param sendCallback 权限
      * @param timeout 超时时间
      * @return
      * @throws MQClientException
@@ -545,6 +554,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
 
         //获取 topic
         TopicPublishInfo topicPublishInfo = this.tryToFindTopicPublishInfo(msg.getTopic());
+
         if (topicPublishInfo != null && topicPublishInfo.ok()) {
             boolean callTimeout = false;
             //最后选择消息要发送到的队列
@@ -554,7 +564,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
 
             //返回信息
             SendResult sendResult = null;
-            //重试次数
+            //重试次数 如果是同步发送，则重试次数为3 否则为1
             int timesTotal = communicationMode == CommunicationMode.SYNC ? 1 + this.defaultMQProducer.getRetryTimesWhenSendFailed() : 1;
 
             int times = 0;
@@ -562,8 +572,9 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             for (; times < timesTotal; times++) {
 
                 String lastBrokerName = null == mq ? null : mq.getBrokerName();
-                //选择要发送到哪个队列
+                //选择要发送到哪个队列 进行负载均衡发送
                 MessageQueue mqSelected = this.selectOneMessageQueue(topicPublishInfo, lastBrokerName);
+
                 if (mqSelected != null) {
                     mq = mqSelected;
                     brokersSent[times] = mq.getBrokerName();
@@ -693,7 +704,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
      * @return
      */
     private TopicPublishInfo tryToFindTopicPublishInfo(final String topic) {
-        //从本地获取 topic 信息
+        //从本地获取 topic 信息  缓存到 map
         TopicPublishInfo topicPublishInfo = this.topicPublishInfoTable.get(topic);
         if (null == topicPublishInfo || !topicPublishInfo.ok()) {
 

@@ -83,8 +83,7 @@ public class NamesrvController {
      * @return
      */
     public boolean initialize() {
-
-
+        //加载配置
         this.kvConfigManager.load();
 
         //netty配置
@@ -110,7 +109,6 @@ public class NamesrvController {
 
         //定期打印全部信息
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-
             @Override
             public void run() {
                 NamesrvController.this.kvConfigManager.printAllPeriodically();

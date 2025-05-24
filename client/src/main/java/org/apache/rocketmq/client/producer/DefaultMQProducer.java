@@ -236,6 +236,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     @Override
     public void start() throws MQClientException {
         this.defaultMQProducerImpl.start();
+        //消息轨迹追踪
         if (null != traceDispatcher) {
             try {
                 traceDispatcher.start(this.getNamesrvAddr());
@@ -269,6 +270,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     }
 
     /**
+     *
+     *  同步发送消息
      * Send message in synchronous mode. This method returns only when the sending procedure totally completes.
      * </p>
      *

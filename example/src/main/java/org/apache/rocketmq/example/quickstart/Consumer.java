@@ -51,6 +51,7 @@ public class Consumer {
 
         /*
          * Specify where to start in case the specified consumer group is a brand new one.
+         * 配置消费点
          */
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
 

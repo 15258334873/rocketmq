@@ -63,6 +63,11 @@ public class BrokerStartup {
     }
 
 
+    /**
+     * 启动 Broker
+     * @param controller
+     * @return
+     */
     public static BrokerController start(BrokerController controller) {
         try {
 
@@ -124,6 +129,7 @@ public class BrokerStartup {
 
             nettyClientConfig.setUseTLS(Boolean.parseBoolean(System.getProperty(TLS_ENABLE,
                 String.valueOf(TlsSystemConfig.tlsMode == TlsMode.ENFORCING))));
+            //broker默认端口
             nettyServerConfig.setListenPort(10911);
             final MessageStoreConfig messageStoreConfig = new MessageStoreConfig();
 
@@ -227,7 +233,7 @@ public class BrokerStartup {
                 messageStoreConfig);
             // remember all configs to prevent discard
             controller.getConfiguration().registerConfig(properties);
-            //初始化 控制器
+            //初始化控制器
             boolean initResult = controller.initialize();
             if (!initResult) {
                 //下线
@@ -235,6 +241,7 @@ public class BrokerStartup {
                 System.exit(-3);
             }
 
+            //注册服务钩子
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 private volatile boolean hasShutdown = false;
                 private AtomicInteger shutdownTimes = new AtomicInteger(0);

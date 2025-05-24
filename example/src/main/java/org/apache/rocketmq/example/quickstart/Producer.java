@@ -57,6 +57,7 @@ public class Producer {
         /*
          * Launch the instance.
          */
+        //启动
         producer.start();
 
         for (int i = 0; i < 1000; i++) {
@@ -73,6 +74,7 @@ public class Producer {
                 /*
                  * Call send message to deliver message to one of brokers.
                  */
+                //发送消息
                 SendResult sendResult = producer.send(msg);
 
                 System.out.printf("%s%n", sendResult);
@@ -85,6 +87,7 @@ public class Producer {
         /*
          * Shut down once the producer instance is not longer in use.
          */
+        //下线
         producer.shutdown();
     }
 }
